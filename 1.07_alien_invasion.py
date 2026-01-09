@@ -58,4 +58,5 @@ if __name__ == '__main__':
     ai = AlienInvasion()
     ai.run_game()
 # 01/09 射击
+# ----------
 
