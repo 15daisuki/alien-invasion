@@ -2,6 +2,8 @@ import sys
 import pygame
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
+
 
 class AlienInvasion:
     def __init__(self):
@@ -14,13 +16,17 @@ class AlienInvasion:
         pygame.display.set_caption("Alien Invasion")
         self.clock = pygame.time.Clock()
         self.ship = Ship(self)
+        self.bullets = pygame.sprite.Group()
 
     def run_game(self):
         while True: # 游戏主循环
             self._check_events()
             self.ship.update()
+            self._update_bullets()
             self._update_screen()
             self.clock.tick(60)
+
+
     def _check_events(self): # 处理事件（键盘 / 鼠标 / 退出）
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:  # 事件监听 用户请求关闭窗口的事件
@@ -38,8 +44,9 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True # 按住左键 → 飞机一直往左动
         elif event.key == pygame.K_q or event.key == pygame.K_ESCAPE:
-            pygame.quit()
             sys.exit()
+        elif event.key == pygame.K_SPACE:
+            self._fire_bullet()
 
     def _check_keyup_events(self, event):
         # 响应松开
@@ -48,8 +55,23 @@ class AlienInvasion:
             elif event.key == pygame.K_LEFT:
                 self.ship.moving_left = False # 松开左键 → 飞机立刻停
 
+    def _fire_bullet(self):
+        if len(self.bullets) < self.settings.bullets_allowed: # 限制子弹数量
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+
+    def _update_bullets(self):
+        """更新子弹的位置并删除已消失的子弹"""
+        self.bullets.update()
+
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
+
     def _update_screen(self):
             self.screen.fill(self.settings.bg_color) # 背景色
+            for bullet in self.bullets.sprites():
+                bullet.draw_bullet()
             self.ship.blitme()
             pygame.display.flip() # 刷新屏幕
              # FPS
@@ -57,6 +79,5 @@ class AlienInvasion:
 if __name__ == '__main__':
     ai = AlienInvasion()
     ai.run_game()
-# 01/09 射击
-# ----------
+
 
