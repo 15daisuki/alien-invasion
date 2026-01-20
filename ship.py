@@ -7,7 +7,7 @@ class Ship:
         self.screen_rect = ai_game.screen.get_rect()
 
         self.image = pygame.image.load('images/ship.bmp') # 读取图片
-        self.image = pygame.transform.scale(self.image, (60,80)) # 改大小
+        self.image = pygame.transform.scale(self.image, (60,60)) # 改大小
 
         self.rect = self.image.get_rect()
         self.rect.midbottom = self.screen_rect.midbottom # 位置
